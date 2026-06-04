@@ -1,0 +1,7 @@
+data:
+  raw: "data/data_raw/sales_data.csv"
+  processed: "data/data_processed/"
+
+logs:
+  file: "logs/app.log"
+
