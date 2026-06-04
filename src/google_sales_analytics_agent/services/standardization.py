@@ -1,9 +1,38 @@
 import logging
 import pandas as pd
 
-
 def standardize_sales_data(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Realiza padronização dos dados de vendas.
 
+    Etapas executadas:
+    - valida colunas obrigatórias
+    - converte tipos de dados
+    - remove espaços extras
+    - padroniza texto
+    - trata valores ausentes
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame bruto de vendas.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame padronizado.
+
+    Raises
+    ------
+    KeyError
+        Quando colunas obrigatórias estão ausentes.
+
+    ValueError
+        Quando transformação falha.
+
+    Exception
+        Para erros inesperados.
+    """
 
     logger = logging.getLogger(__name__)
 
