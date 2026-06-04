@@ -3,6 +3,7 @@ import logging
 from google_sales_analytics_agent.utils.load_config.loader_config import load_all_configs
 from google_sales_analytics_agent.utils.loggers.logger import setup_logger
 from google_sales_analytics_agent.database.connection import get_engine
+from google_sales_analytics_agent.database.load_sales import get_load_sales
 
 def run_pipeline() ->None:
 
@@ -21,6 +22,10 @@ def run_pipeline() ->None:
     conn = get_engine(configs["db"]["database"])
 
     print(conn)
+
+    teste = get_load_sales(conn)
+
+    print(teste)
 
     conn.dispose()
 
