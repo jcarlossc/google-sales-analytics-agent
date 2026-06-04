@@ -5,7 +5,36 @@ import pandas as pd
 def validate_sales_data(
     df: pd.DataFrame
 ) -> Dict[str, Any]:
-   
+    """
+    Executa testes de qualidade sobre
+    os dados de vendas.
+
+    Regras avaliadas:
+    - valores ausentes
+    - duplicidades
+    - preços negativos
+    - quantidade inválida
+    - datas inválidas
+    - margem negativa
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Base de vendas padronizada.
+
+    Returns
+    -------
+    Dict[str, Any]
+        Métricas e resultados dos testes.
+
+    Raises
+    ------
+    ValueError
+        Quando DataFrame está vazio.
+
+    Exception
+        Erros inesperados.
+    """
 
     logger = logging.getLogger(__name__)
 
