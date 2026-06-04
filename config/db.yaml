@@ -1,0 +1,14 @@
+app:
+  name: Google Sales Analytics Agent
+  environment: development
+
+database:
+  host: localhost
+  port: 3306
+  db: loja_informatica
+  user: root
+  password: ""
+
+tables:
+  sales: vendas
+
