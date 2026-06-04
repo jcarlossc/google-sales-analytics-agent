@@ -136,7 +136,6 @@ def standardize_sales_data(df: pd.DataFrame) -> pd.DataFrame:
         return df
 
     except KeyError as error:
-
         logger.warning(
             f"Erro de estrutura: {error}"
         )
@@ -144,7 +143,6 @@ def standardize_sales_data(df: pd.DataFrame) -> pd.DataFrame:
         raise
 
     except ValueError as error:
-
         logger.error(
             f"Erro de transformação: {error}"
         )
@@ -152,7 +150,6 @@ def standardize_sales_data(df: pd.DataFrame) -> pd.DataFrame:
         raise
 
     except Exception as error:
-
         logger.exception(
             "Erro inesperado durante padronização."
         )
