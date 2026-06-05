@@ -1,10 +1,10 @@
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
 import pandas as pd
 
 def validate_sales_data(
     df: pd.DataFrame
-) -> Dict[str, Any]:
+) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     """
     Executa testes de qualidade sobre
     os dados de vendas.
@@ -146,10 +146,9 @@ def validate_sales_data(
             "Validação concluída."
         )
 
-        return quality_report
+        return df
 
     except ValueError as error:
-
         logger.warning(
             str(error)
         )
@@ -157,7 +156,6 @@ def validate_sales_data(
         raise
 
     except Exception:
-
         logger.exception(
             "Erro durante validação."
         )

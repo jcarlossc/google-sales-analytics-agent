@@ -6,6 +6,7 @@ from google_sales_analytics_agent.database.connection import get_engine
 from google_sales_analytics_agent.database.load_sales import get_load_sales
 from google_sales_analytics_agent.services.standardization import standardize_sales_data
 from google_sales_analytics_agent.services.validate import validate_sales_data
+from google_sales_analytics_agent.services.Metrics import Metrics
 
 def run_pipeline() ->None:
 
@@ -29,9 +30,15 @@ def run_pipeline() ->None:
 
     standardization = standardize_sales_data(queries)
 
-    validate = validate_sales_data(standardization)
+    df = validate_sales_data(standardization)
 
-    print(validate)
+    metrics = Metrics(df)
+    print(metrics.total_invoicing())
+    print(metrics.total_cost())
+    print(metrics.total_profit())
+    print(metrics.percentage_margin())
+    print(metrics.sales_month())
+    print(metrics.top_sellers())
 
     conn.dispose()
 
