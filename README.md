@@ -126,30 +126,40 @@ Tabela utilizada no banco:
 |vendedor |	responsável pela venda |
 
 ## Mode de Utilização
+⚠️Observação: aplicações em Python, ou em outras linguagens, que utilizam banco de dados e APIs, nunca é recomendado deixar senhas diretamente no código (hardcoded password). Neste projeto, por motivos didáticos (para facilitar a reprodução), o arquivo de senha do Banco de Dados está no arquivo YAML, mas essa abordagem é extremamente desaprovada. 
 
-1. Com a linguagem Python instalada: <a href="https://www.python.org/downloads/" target="_blank">https://www.python.org/downloads/</a>
-2. Instale o pipx: 
+1. Execute o XAMPP
+* Caso não o tenha, baixe-o: <a href="https://www.apachefriends.org/pt_br/download.html">https://www.apachefriends.org/pt_br/download.html</a>
+* Instale-o normalmente
+* Execute o Painel de Controle
+* Acione o Apache e o MySQL/MariaDB
+* Ao lado do botão start/stop do MySQL/MariaDB, clique em Admin. Isso irá abrir a interface do MySQL/MariaDB no navegador
+* Clique na aba importar e em escolher arquivo: o script está na raiz do projeto: ```script_database/loja_informatica.sql```, após isso, clique em importar no final da página
+* O banco de Dados está com usuário ```root``` e senha vazia. O arquivo de configuração está em: ```config/db.yaml```
+
+2. Com a linguagem Python instalada: <a href="https://www.python.org/downloads/" target="_blank">https://www.python.org/downloads/</a>
+3. Instale o pipx: 
 ```
 pip install pipx
 ```
-3. Em seguida:
+4. Em seguida:
 ```
 pipx ensurepath
 ```
-4. E, por fim, o gerenciador Poetry:
+5. E, por fim, o gerenciador Poetry:
 ```
 pipx install poetry
 ```
-5. Clone o repositório e acesse o diretório
+6. Clone o repositório e acesse o diretório
 ```
 git clone https://github.com/jcarlossc/google-sales-analytics-agent.git
 cd google-sales-analytics-agent
 ```
-6. Instalação das dependências:
+7. Instalação das dependências:
 ```
 poetry install
 ```
-7. Para executar o projeto:
+8. Para executar o projeto:
 ```
 poetry run vendas
 ```
