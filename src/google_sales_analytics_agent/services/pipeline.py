@@ -39,6 +39,7 @@ def run_pipeline() ->None:
     print(metrics.percentage_margin())
     print(metrics.sales_month())
     print(metrics.top_sellers())
+    print(metrics.top_products())
 
     conn.dispose()
 
