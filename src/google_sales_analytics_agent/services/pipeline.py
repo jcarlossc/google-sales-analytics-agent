@@ -7,6 +7,7 @@ from google_sales_analytics_agent.database.load_sales import get_load_sales
 from google_sales_analytics_agent.services.standardization import standardize_sales_data
 from google_sales_analytics_agent.services.validate import validate_sales_data
 from google_sales_analytics_agent.services.Metrics import Metrics
+from google_sales_analytics_agent.services.statistic import descriptive_statistics
 
 def run_pipeline() ->None:
 
@@ -21,10 +22,7 @@ def run_pipeline() ->None:
 
     logger.info("### Iniciando pipeline de vendas. ###")
     
-
     conn = get_engine(configs["db"]["database"])
-
-    print(conn)
 
     queries = get_load_sales(conn)
 
@@ -33,15 +31,24 @@ def run_pipeline() ->None:
     df = validate_sales_data(standardization)
 
     metrics = Metrics(df)
-    print(metrics.total_invoicing())
-    print(metrics.total_cost())
-    print(metrics.total_profit())
-    print(metrics.percentage_margin())
-    print(metrics.sales_month())
-    print(metrics.top_sellers())
-    print(metrics.top_products())
+
+    sales_metrics = {
+        "faturamento": metrics.total_invoicing(),
+        "custo": metrics.total_cost(),
+        "lucro": metrics.total_profit(),
+        "porcentagem_margem": metrics.percentage_margin(),
+        "vendas_mes": metrics.sales_month(),
+        "top_vendedore": metrics.top_sellers(),
+        "top_produtos": metrics.top_products()
+    }
+
+    statistics = descriptive_statistics(df)
 
     conn.dispose()
 
     logger.info("### Término do pipeline de vendas. ###")
+
+    return sales_metrics, statistics
+
+
 
