@@ -125,6 +125,26 @@ Tabela utilizada no banco:
 |valor_venda | preço de venda |
 |vendedor |	responsável pela venda |
 
+## Observabilidade
+O projeto possui logging estruturado com rastreamento completo da execução.
+Exemplo de log:
+```
+2026-06-06 15:39:05,873 - INFO - root - Logger configurado com sucesso.
+2026-06-06 15:39:05,875 - INFO - google_sales_analytics_agent.services.pipeline - ### Iniciando pipeline de vendas. ###
+2026-06-06 15:39:05,877 - INFO - google_sales_analytics_agent.services.pipeline - Criando conexão com banco.
+2026-06-06 15:39:05,879 - INFO - google_sales_analytics_agent.database.connection - Iniciando criação da engine.
+2026-06-06 15:39:06,467 - INFO - google_sales_analytics_agent.database.connection - Engine criada com sucesso.
+2026-06-06 15:39:06,467 - INFO - google_sales_analytics_agent.services.pipeline - Carregando dados.
+2026-06-06 15:39:06,468 - INFO - google_sales_analytics_agent.database.load_sales - Iniciando carregamento dos dados de vendas.
+2026-06-06 15:39:07,182 - INFO - google_sales_analytics_agent.database.load_sales - 600 registros carregados.
+2026-06-06 15:39:07,184 - INFO - google_sales_analytics_agent.services.pipeline - Padronizando dados.
+2026-06-06 15:39:07,186 - INFO - google_sales_analytics_agent.services.standardization - Iniciando padronização dos dados.
+2026-06-06 15:39:07,482 - INFO - google_sales_analytics_agent.services.standardization - 0 duplicatas removidas.
+2026-06-06 15:39:07,484 - INFO - google_sales_analytics_agent.services.standardization - Padronização concluída.
+2026-06-06 15:39:07,485 - INFO - google_sales_analytics_agent.services.pipeline - Validando dados.
+2026-06-06 15:39:07,486 - INFO - google_sales_analytics_agent.services.validate - Iniciando validação de qualidade.
+```
+
 ## Mode de Utilização
 ⚠️Observação: aplicações em Python, ou em outras linguagens, que utilizam banco de dados e APIs, nunca é recomendado deixar senhas diretamente no código (hardcoded password). Neste projeto, por motivos didáticos (para facilitar a reprodução), o arquivo de senha do Banco de Dados está no arquivo YAML, mas essa abordagem é extremamente desaprovada. 
 
