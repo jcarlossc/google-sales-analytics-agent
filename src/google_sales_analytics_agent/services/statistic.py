@@ -1,8 +1,8 @@
 import logging
-from typing import Dict, Any, List
+#from typing import Dict, Any, List
 import pandas as pd
 
-def descriptive_statistics(df: pd.DataFrame) -> Dict[str, Any]:
+def descriptive_statistics(df: pd.DataFrame) -> pd.DataFrame:
     """
     Gera estatísticas descritivas para dataset de vendas.
 
@@ -27,7 +27,7 @@ def descriptive_statistics(df: pd.DataFrame) -> Dict[str, Any]:
                 "DataFrame vazio."
             )
 
-        resultado = {}
+        statistics_df = pd.DataFrame()
 
         # -------------------
         # vendas_id
@@ -35,16 +35,10 @@ def descriptive_statistics(df: pd.DataFrame) -> Dict[str, Any]:
 
         logger.info("Calculando total de vendas.")
 
-        resultado["vendas_id"] = {
+        statistics_df = df["vendas_id"] = {
 
             "total_registros":
-                df["vendas_id"].count(),
-
-            #"ids_unicos":
-                #df["vendas_id"].nunique(),
-
-            #"duplicados":
-                #df["vendas_id"].duplicated().sum()
+                df["vendas_id"].count()
         }
 
         # -------------------
@@ -53,7 +47,7 @@ def descriptive_statistics(df: pd.DataFrame) -> Dict[str, Any]:
 
         logger.info("Calculando datas.")
 
-        resultado["data_venda"] = {
+        statistics_df["data_venda"] = {
 
             "primeira_venda":
                 str(df["data_venda"].min()),
@@ -82,7 +76,7 @@ def descriptive_statistics(df: pd.DataFrame) -> Dict[str, Any]:
 
         logger.info("Calculando quantidade vendida.")
 
-        resultado["quantidade_vendida"] = {
+        statistics_df["quantidade_vendida"] = {
 
             "media":
                 round(
@@ -122,7 +116,7 @@ def descriptive_statistics(df: pd.DataFrame) -> Dict[str, Any]:
 
         logger.info("Calculando ranking de produtos.")
 
-        resultado["produto"] = {
+        statistics_df["produto"] = {
 
             "produtos_unicos":
                 df["produto"].nunique(),
@@ -148,7 +142,7 @@ def descriptive_statistics(df: pd.DataFrame) -> Dict[str, Any]:
 
         logger.info("Calculando valor de compra.")
 
-        resultado["valor_compra"] = {
+        statistics_df["valor_compra"] = {
 
             "media":
                 round(
@@ -177,7 +171,7 @@ def descriptive_statistics(df: pd.DataFrame) -> Dict[str, Any]:
 
         logger.info("Calculando valor de venda.")
 
-        resultado["valor_venda"] = {
+        statistics_df["valor_venda"] = {
 
             "media":
                 round(
@@ -204,7 +198,7 @@ def descriptive_statistics(df: pd.DataFrame) -> Dict[str, Any]:
 
         logger.info("Término do cálculo de Estatística Descritiva.")
 
-        return resultado
+        return statistics_df
 
     except Exception as erro:
 
