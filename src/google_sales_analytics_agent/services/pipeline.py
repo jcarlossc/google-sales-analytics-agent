@@ -1,54 +1,159 @@
 from pathlib import Path
+import pandas as pd
+from typing import Dict, Any, Tuple
 import logging
+
 from google_sales_analytics_agent.utils.load_config.loader_config import load_all_configs
 from google_sales_analytics_agent.utils.loggers.logger import setup_logger
 from google_sales_analytics_agent.database.connection import get_engine
 from google_sales_analytics_agent.database.load_sales import get_load_sales
 from google_sales_analytics_agent.services.standardization import standardize_sales_data
 from google_sales_analytics_agent.services.validate import validate_sales_data
-from google_sales_analytics_agent.services.Metrics import Metrics
+from google_sales_analytics_agent.services.metrics import calculate_metrics
 from google_sales_analytics_agent.services.statistic import descriptive_statistics
+from google_sales_analytics_agent.agent_ia_google.agent_ia_report import get_agent_report
 
-def run_pipeline() ->None:
+def run_pipeline() -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    """
+    Executa pipeline completo de análise de vendas.
 
-    config_path = Path("config")
+    Fluxo:
+    1. Carrega configurações
+    2. Configura logging
+    3. Cria conexão banco
+    4. Extrai dados
+    5. Padroniza dados
+    6. Valida dataset
+    7. Calcula métricas
+    8. Calcula estatísticas
+    9. Finaliza recursos
 
-    configs = load_all_configs(config_path)
+    Returns
+    -------
+    Tuple[Dict[str, Any], Dict[str, Any]]
+        sales_metrics:
+            Métricas financeiras e comerciais.
 
+        statistics:
+            Estatísticas descritivas.
 
-    setup_logger(configs["logging"], configs["paths"]["logs"]["file"])
+    Raises
+    ------
+    RuntimeError
+        Caso alguma etapa do pipeline falhe.
+    """
 
     logger = logging.getLogger(__name__)
 
-    logger.info("### Iniciando pipeline de vendas. ###")
-    
-    conn = get_engine(configs["db"]["database"])
+    conn = None
 
-    queries = get_load_sales(conn)
+    pd.set_option(
+        "display.float_format",
+        "{:,.2f}".format
+    )
 
-    standardization = standardize_sales_data(queries)
+    try:
+        # -------------------------
+        # Logger
+        # -------------------------
+        logger.info(
+            "Carregando arquivos de configutação."
+        )
 
-    df = validate_sales_data(standardization)
+        config_path = Path("config")
 
-    metrics = Metrics(df)
+        configs = load_all_configs(config_path)
 
-    sales_metrics = {
-        "faturamento": metrics.total_invoicing(),
-        "custo": metrics.total_cost(),
-        "lucro": metrics.total_profit(),
-        "porcentagem_margem": metrics.percentage_margin(),
-        "vendas_mes": metrics.sales_month(),
-        "top_vendedore": metrics.top_sellers(),
-        "top_produtos": metrics.top_products()
-    }
+        # -------------------------
+        # Logger
+        # -------------------------
+        logger.info("Criando logger.")
 
-    statistics = descriptive_statistics(df)
+        setup_logger(configs["logging"], configs["paths"]["logs"]["file"])
 
-    conn.dispose()
+        logger.info("### Iniciando pipeline de vendas. ###")
+        
+        # -------------------------
+        # Conexão banco
+        # -------------------------
+        logger.info("Criando conexão com banco.")
 
-    logger.info("### Término do pipeline de vendas. ###")
+        conn = get_engine(configs["db"]["database"])
 
-    return sales_metrics, statistics
+        # -------------------------
+        # Extração
+        # -------------------------
+        logger.info("Carregando dados.")
 
+        queries = get_load_sales(conn)
 
+        # -------------------------
+        # Transformação
+        # -------------------------
+        logger.info("Padronizando dados.")
+
+        standardization = standardize_sales_data(queries)
+
+        # -------------------------
+        # Validação
+        # -------------------------
+
+        logger.info("Validando dados.")
+
+        df = validate_sales_data(standardization)
+
+        # -------------------------
+        # Métricas
+        # -------------------------
+        logger.info("Processando métricas.")
+
+        metrics_df = calculate_metrics(df)
+
+        print(metrics_df)
+
+        # -------------------------
+        # Estatística
+        # -------------------------
+        logger.info("Processando estatísticas.")
+
+        statistics_df = descriptive_statistics(df)
+
+        print(statistics_df)
+
+        # -------------------------
+        # Agente IA Google
+        # -------------------------
+        get_agent_report(
+            df,
+            metrics_df,
+            statistics_df
+        )
+
+        logger.info("### Término do pipeline de vendas. ###")
+
+        #return (metrics, statistics)
+
+    except Exception as erro:
+
+        logger.exception(
+            "Falha durante execução do pipeline."
+        )
+
+        raise RuntimeError(
+            f"Erro no pipeline: {erro}"
+        ) from erro
+
+    finally:
+
+        if conn is not None:
+
+            logger.info(
+                "Fechando conexão."
+            )
+
+            conn.dispose()
+
+        logger.info(
+            "### Pipeline finalizado ###"
+        )
 
