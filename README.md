@@ -146,7 +146,9 @@ Exemplo de log:
 ```
 
 ## Mode de Utilização
-⚠️Observação: aplicações em Python, ou em outras linguagens, que utilizam banco de dados e APIs, nunca é recomendado deixar senhas diretamente no código (hardcoded password). Neste projeto, por motivos didáticos (para facilitar a reprodução), o arquivo de senha do Banco de Dados está no arquivo YAML, mas essa abordagem é extremamente desaprovada. 
+⚠️Observação: aplicações em Python, ou em outras linguagens, que utilizam banco de dados e APIs, nunca é recomendado deixar senhas diretamente no código (hardcoded password). Neste projeto, por motivos didáticos (para facilitar a reprodução), o arquivo de senha do Banco de Dados e a chave da api Google estão no arquivo YAML, mas essa abordagem é extremamente desaprovada em produção. 
+
+
 
 1. Execute o XAMPP
 * Caso não o tenha, baixe-o: <a href="https://www.apachefriends.org/pt_br/download.html">https://www.apachefriends.org/pt_br/download.html</a>
