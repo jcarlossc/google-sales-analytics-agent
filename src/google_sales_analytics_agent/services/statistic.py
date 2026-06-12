@@ -1,8 +1,8 @@
 import logging
-#from typing import Dict, Any, List
+from typing import Dict #, Any, List
 import pandas as pd
 
-def descriptive_statistics(df: pd.DataFrame) -> pd.DataFrame:
+def descriptive_statistics(df: pd.DataFrame) -> Dict:
     """
     Gera estatísticas descritivas para dataset de vendas.
 
@@ -27,173 +27,91 @@ def descriptive_statistics(df: pd.DataFrame) -> pd.DataFrame:
                 "DataFrame vazio."
             )
 
-        statistics_df = pd.DataFrame()
+        statistics_df = {
 
-        # -------------------
-        # vendas_id
-        # -------------------
+            "total_registros": df["vendas_id"].count(),
 
-        logger.info("Calculando total de vendas.")
+            "data_venda": {
 
-        statistics_df = df["vendas_id"] = {
+                "primeira_venda":
+                    str(df["data_venda"].min()),
 
-            "total_registros":
-                df["vendas_id"].count()
-        }
+                "ultima_venda":
+                    str(df["data_venda"].max()),
 
-        # -------------------
-        # data_venda
-        # -------------------
+                "dias_periodo":
+                    (
+                        df["data_venda"].max()
+                        -
+                        df["data_venda"].min()
+                    ).days,
 
-        logger.info("Calculando datas.")
-
-        statistics_df["data_venda"] = {
-
-            "primeira_venda":
-                str(df["data_venda"].min()),
-
-            "ultima_venda":
-                str(df["data_venda"].max()),
-
-            "dias_periodo":
-                (
-                    df["data_venda"].max()
-                    -
-                    df["data_venda"].min()
-                ).days,
-
-            "mes_mais_vendas":
-                (
+                "mes_mais_vendas":
                     df["data_venda"]
                     .dt.month
                     .mode()[0]
-                )
-        }
+            },
 
-        # -------------------
-        # quantidade_vendida
-        # -------------------
+            "quantidade_vendida": {
 
-        logger.info("Calculando quantidade vendida.")
+                "media":
+                    round(
+                        df["quantidade_vendida"].mean(),
+                        2
+                    ),
 
-        statistics_df["quantidade_vendida"] = {
+                "mediana":
+                    df["quantidade_vendida"].median(),
 
-            "media":
-                round(
-                    df["quantidade_vendida"].mean(),
-                    2
-                ),
+                "desvio_padrao":
+                    round(
+                        df["quantidade_vendida"].std(),
+                        2
+                    ),
 
-            "mediana":
-                df["quantidade_vendida"].median(),
+                "minimo": df["quantidade_vendida"].min(),  
 
-            "desvio_padrao":
-                round(
-                    df["quantidade_vendida"].std(),
-                    2
-                ),
+                "q1": df["quantidade_vendida"].quantile( 0.25 ), 
+                
+                "q3": df["quantidade_vendida"].quantile( 0.75 ), 
+                
+                "maximo": df["quantidade_vendida"].max()  
+            },
 
-            "minimo":
-                df["quantidade_vendida"].min(),
+            "produto": {
+                "produtos_unicos":
+                    df["produto"].nunique(),
 
-            "q1":
-                df["quantidade_vendida"].quantile(
-                    0.25
-                ),
-
-            "q3":
-                df["quantidade_vendida"].quantile(
-                    0.75
-                ),
-
-            "maximo":
-                df["quantidade_vendida"].max()
-        }
-
-        # -------------------
-        # produto
-        # -------------------
-
-        logger.info("Calculando ranking de produtos.")
-
-        statistics_df["produto"] = {
-
-            "produtos_unicos":
-                df["produto"].nunique(),
-
-            "produto_mais_vendido":
-                (
+                "produto_mais_vendido":
                     df["produto"]
-                    .mode()[0]
-                ),
+                    .mode()[0],
+                    
+                "top_5_produtos": 
+                    df["produto"] .value_counts() .head(5)    
+            },
 
-            "top_5_produtos":
-                (
-                    df["produto"]
-                    .value_counts()
-                    .head(5)
-                    .to_dict()
-                )
-        }
+            "valor_compra": {
+                "media": round( df["valor_compra"].mean(), 2 ), 
+                
+                "mediana": df["valor_compra"].median(), 
+                
+                "desvio": round( df["valor_compra"].std(), 2 ), 
+                
+                "q1": df["valor_compra"].quantile( 0.25 ), 
+                
+                "q3": df["valor_compra"].quantile( 0.75 ),  
+            },
 
-        # -------------------
-        # valor_compra
-        # -------------------
+            "valor_venda" : {
+                "media": round( df["valor_venda"].mean(), 2 ), 
+                
+                "mediana": df["valor_venda"].median(), 
+                
+                "total_faturado": round( ( df["valor_venda"] * df["quantidade_vendida"] ).sum(), 2 ), 
+                
+                "maximo": df["valor_venda"].max() 
+            }
 
-        logger.info("Calculando valor de compra.")
-
-        statistics_df["valor_compra"] = {
-
-            "media":
-                round(
-                    df["valor_compra"].mean(),
-                    2
-                ),
-
-            "mediana":
-                df["valor_compra"].median(),
-
-            "desvio":
-                round(
-                    df["valor_compra"].std(),
-                    2
-                ),
-
-            "quartis":
-                df["valor_compra"].quantile(
-                    [0.25,0.5,0.75]
-                ).to_dict()
-        }
-
-        # -------------------
-        # valor_venda
-        # -------------------
-
-        logger.info("Calculando valor de venda.")
-
-        statistics_df["valor_venda"] = {
-
-            "media":
-                round(
-                    df["valor_venda"].mean(),
-                    2
-                ),
-
-            "mediana":
-                df["valor_venda"].median(),
-
-            "total_faturado":
-                round(
-                    (
-                        df["valor_venda"]
-                        *
-                        df["quantidade_vendida"]
-                    ).sum(),
-                    2
-                ),
-
-            "maximo":
-                df["valor_venda"].max()
         }
 
         logger.info("Término do cálculo de Estatística Descritiva.")
