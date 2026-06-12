@@ -124,7 +124,6 @@ def run_pipeline() -> Tuple[Dict[str, Any], Dict[str, Any]]:
         # Agente IA Google
         # -------------------------
         get_agent_report(
-            df,
             metrics_df,
             statistics_df
         )
