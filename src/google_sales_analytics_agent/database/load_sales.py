@@ -45,6 +45,10 @@ def get_load_sales(engine: Engine) -> pd.DataFrame:
 
     v.vendas_id,
     v.data_venda,
+
+    v.produto_id,
+    v.vendedor_id,
+
     v.quantidade_vendida,
 
     p.produto,

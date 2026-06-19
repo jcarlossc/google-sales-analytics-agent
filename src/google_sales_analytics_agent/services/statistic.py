@@ -111,7 +111,6 @@ def descriptive_statistics(df: pd.DataFrame) -> Dict:
                 
                 "maximo": df["valor_venda"].max() 
             }
-
         }
 
         logger.info("Término do cálculo de Estatística Descritiva.")

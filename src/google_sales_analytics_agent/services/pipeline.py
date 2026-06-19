@@ -109,7 +109,7 @@ def run_pipeline() -> Tuple[Dict[str, Any], Dict[str, Any]]:
 
         metrics_df = calculate_metrics(df)
 
-        print(metrics_df)
+        #print(metrics_df)
 
         # -------------------------
         # Estatística
@@ -118,7 +118,7 @@ def run_pipeline() -> Tuple[Dict[str, Any], Dict[str, Any]]:
 
         statistics_df = descriptive_statistics(df)
 
-        print(statistics_df)
+        #print(statistics_df)
 
         # -------------------------
         # Agente IA Google

@@ -5,7 +5,11 @@ import re
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import matplotlib.colors as mcolors
+from matplotlib.ticker import FuncFormatter
 import google.genai as genai
+import logging
 
 from reportlab.platypus import (
     SimpleDocTemplate,
@@ -19,16 +23,13 @@ from reportlab.lib.styles import getSampleStyleSheet
 from google_sales_analytics_agent.utils.load_config.loader_config import load_all_configs
 
 def get_agent_report(
-    metrics_df: pd.DataFrame,
+    metrics_df: Dict[str, Any],
     statistics_df: Dict[str, Any]
 ) -> None:
+    
+    logger = logging.getLogger(__name__)
 
-    metrics = dict(
-    zip(
-        metrics_df["metrica"],
-        metrics_df["valor"]
-        )
-    )
+    logger.info("Início da geração do relatório.")    
 
     config_path = Path("config")
 
@@ -46,8 +47,8 @@ def get_agent_report(
     PDF_FILE = OUTPUT_DIR / "relatorio_financeiro.pdf"
 
     GRAPH_FILE_INDICADORES = OUTPUT_DIR / "indicadores.png"
-    GRAPH_FILE_MARGEM = OUTPUT_DIR / "margem.png"
-    GRAPH_FILE_DISTRIBUICAO = OUTPUT_DIR / "distribuicao.png"
+    GRAPH_FILE_TOP_SELLER = OUTPUT_DIR / "top_seller.png"
+    GRAPH_FILE_TOP_PRODUCTS = OUTPUT_DIR / "top_products.png"
 
     API_KEY = configs["api_google"]["api"]["api_google"]
 
@@ -61,10 +62,17 @@ def get_agent_report(
     # =====================================================
     # MÉTRICAS
     # =====================================================
-    faturamento = metrics["faturamento_total"]
-    custo = metrics["custo_total"]
-    lucro = metrics["lucro_total"]
-    margem = metrics["margem_percentual"]
+    total_vendas = metrics_df["kpis"]["total_vendas"]
+    total_itens_vendidos = metrics_df["kpis"]["total_itens_vendidos"]
+    faturamento_total = metrics_df["kpis"]["faturamento_total"]
+    custo_total = metrics_df["kpis"]["custo_total"]
+    lucro_total = metrics_df["kpis"]["lucro_total"]
+    margem = metrics_df["kpis"]["margem"]
+    ticket_medio = metrics_df["kpis"]["ticket_medio"]
+    qtd_produtos = metrics_df["kpis"]["qtd_produtos"]
+    qtd_vendedores = metrics_df["kpis"]["qtd_vendedores"]
+    by_seller = metrics_df["by_seller"]
+    by_product = metrics_df["by_product"]
 
     # =====================================================
     # ESTATÍSTICAS
@@ -97,17 +105,19 @@ def get_agent_report(
 
     # -----------------------------------
     # GRÁFICOS
-    # Faturamento, custo e lucro
+    # Faturamento, custo, lucro e ticket
     # -----------------------------------
     valores = [
-        faturamento,
-        custo,
-        lucro
+        faturamento_total,
+        custo_total,
+        lucro_total,
+        ticket_medio
     ]
     labels = [
         "Faturamento",
         "Custo",
-        "Lucro"
+        "Lucro",
+        "Ticket Médio"
     ]    
     fig, ax = plt.subplots(
     figsize=(8, 5)
@@ -149,82 +159,198 @@ def get_agent_report(
     plt.close()
 
     # -----------------------------------
-    # Margem
+    # Top 10 vendedores
     # -----------------------------------
-    plt.figure(figsize=(6, 4))
-
-    bars = plt.bar(
-        ["Margem de Lucro"],
-        [margem]
+    top_sellers = (
+        by_seller
+        .head(10)
+        .sort_values("faturamento")
     )
 
-    # Exibe o valor acima da barra
+    fig, ax = plt.subplots(
+        figsize=(10, 6)
+    )
+
+    norm = mcolors.Normalize(
+        vmin=top_sellers["faturamento"].min(),
+        vmax=top_sellers["faturamento"].max()
+    )
+
+    colors = cm.Blues(
+        norm(top_sellers["faturamento"])
+    )
+
+    bars = ax.barh(
+        top_sellers["vendedor"],
+        top_sellers["faturamento"],
+        color=colors,
+        edgecolor="black"
+    )
+
+    max_value = top_sellers["faturamento"].max()
+
     for bar in bars:
-        plt.text(
-            bar.get_x() + bar.get_width() / 2,
-            bar.get_height(),
-            f"{margem:.2f}%",
-            ha="center",
-            va="bottom"
+
+        value = bar.get_width()
+
+        ax.text(
+            value * 1.01,
+            bar.get_y() + bar.get_height()/2,
+            f"R$ {value:,.2f}".replace(",", "X")
+                                  .replace(".", ",")
+                                  .replace("X", "."),
+            va="center",
+            fontsize=9,
+            fontweight="bold"
         )
 
-    plt.title("Margem de Lucro (%)")
-    plt.ylabel("Percentual (%)")
-    plt.ylim(0, max(margem * 1.2, 10))
-    plt.grid(axis="y", linestyle="--", alpha=0.5)
-
-    plt.tight_layout()
-    plt.savefig(GRAPH_FILE_MARGEM, dpi=300, bbox_inches="tight")
-    plt.close()
-
-    # -----------------------------------
-    # Distribuição da Quantidade Vendida
-    # -----------------------------------
-    valores = [
-    statistics_df["quantidade_vendida"]["minimo"],
-    statistics_df["quantidade_vendida"]["q1"],
-    statistics_df["quantidade_vendida"]["mediana"],
-    statistics_df["quantidade_vendida"]["q3"],
-    statistics_df["quantidade_vendida"]["maximo"]
-    ]
-
-    labels = [
-        "Mínimo",
-        "Q1",
-        "Mediana",
-        "Q3",
-        "Máximo"
-    ]
-
-    plt.figure(figsize=(8, 5))
-
-    plt.plot(
-        labels,
-        valores,
-        marker="o",
-        linewidth=2
+    ax.set_title(
+        "Top 10 Vendedores",
+        fontsize=16,
+        fontweight="bold"
     )
 
-    # Exibe os valores em cada ponto
-    for x, y in zip(labels, valores):
-        plt.annotate(
-            f"{y:.0f}",
-            (x, y),
-            textcoords="offset points",
-            xytext=(0, 8),
-            ha="center"
-        )
+    ax.set_xlabel("Faturamento")
 
-    plt.title("Distribuição da Quantidade Vendida")
-    plt.xlabel("Medidas Estatísticas")
-    plt.ylabel("Quantidade")
-    plt.grid(True, linestyle="--", alpha=0.5)
+    ax.grid(
+        axis="x",
+        linestyle="--",
+        alpha=0.3
+    )
+
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
 
     plt.tight_layout()
-    plt.savefig(GRAPH_FILE_DISTRIBUICAO, dpi=300, bbox_inches="tight")
+
+    plt.savefig(
+        GRAPH_FILE_TOP_SELLER,
+        dpi=300,
+        bbox_inches="tight"
+    )
+
     plt.close()
 
-     # -----------------------------------
+    # -----------------------------------
+    # Top 10 produtos
+    # -----------------------------------
+    top_products = (
+        by_product
+        .head(10)
+        .sort_values(
+            "faturamento"
+        )
+    )
+
+
+    fig, ax = plt.subplots(
+        figsize=(10, 6)
+    )
+
+
+    # Gradiente de cores
+    norm = mcolors.Normalize(
+        vmin=top_products["faturamento"].min(),
+        vmax=top_products["faturamento"].max()
+    )
+
+    colors = cm.Blues(
+        norm(
+            top_products["faturamento"]
+        )
+    )
+
+
+    # Barras horizontais
+    bars = ax.barh(
+        top_products["produto"],
+        top_products["faturamento"],
+        color=colors,
+        edgecolor="black",
+        linewidth=0.8
+    )
+
+
+    # Valores nas barras
+    for bar in bars:
+
+        valor = bar.get_width()
+
+        ax.text(
+            valor * 1.01,
+            bar.get_y() + bar.get_height()/2,
+            (
+                f"R$ {valor:,.2f}"
+                .replace(",", "X")
+                .replace(".", ",")
+                .replace("X", ".")
+            ),
+            va="center",
+            fontsize=9,
+            fontweight="bold"
+        )
+
+
+    # Título
+    ax.set_title(
+        "Top 10 Produtos",
+        fontsize=16,
+        fontweight="bold",
+        pad=15
+    )
+
+
+    ax.text(
+        0.5,
+        1.02,
+        "Ranking dos produtos com maior faturamento",
+        transform=ax.transAxes,
+        ha="center",
+        fontsize=11,
+        color="gray"
+    )
+
+
+    ax.set_xlabel(
+        "Faturamento (R$)",
+        fontsize=11,
+        fontweight="bold"
+    )
+
+
+    ax.set_ylabel(
+        "Produto",
+        fontsize=11,
+        fontweight="bold"
+    )
+
+
+    # Grid
+    ax.grid(
+        axis="x",
+        linestyle="--",
+        alpha=0.3
+    )
+
+
+    # Limpeza visual
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+
+    plt.tight_layout()
+
+
+    plt.savefig(
+        GRAPH_FILE_TOP_PRODUCTS,
+        dpi=300,
+        bbox_inches="tight"
+    )
+
+    plt.close()
+
+
+    # -----------------------------------
     # PROMPT
     # -----------------------------------
     prompt = f"""
@@ -232,13 +358,27 @@ def get_agent_report(
 
     MÉTRICAS:
 
-    Faturamento total: {faturamento}
+    Total de vendas: {total_vendas}
 
-    Custo: {custo}
+    Total de itens vendidos: {total_itens_vendidos}
 
-    Lucro total: {lucro}
+    Faturamento total: {faturamento_total}
 
-    Margem percentual: {margem:.2f}%
+    Custo: {custo_total}
+
+    Lucro total: {lucro_total}
+
+    Ticket médio: {ticket_medio}
+
+    Quantidade de produtos: {qtd_produtos}
+
+    Quantidade de vendedores: {qtd_vendedores}
+
+    Faturamento por produto : {by_product}
+
+    Faturamento por vendedor : {by_seller}
+
+    Margem percentual: {margem}
 
     Total registros: {total_registros}
 
@@ -619,7 +759,7 @@ def get_agent_report(
 
     story.append(
         Image(
-            str(GRAPH_FILE_MARGEM),
+            str(GRAPH_FILE_TOP_SELLER),
             width=450,
             height=250
         )
@@ -627,7 +767,7 @@ def get_agent_report(
 
     story.append(
         Image(
-            str(GRAPH_FILE_DISTRIBUICAO),
+            str(GRAPH_FILE_TOP_PRODUCTS),
             width=450,
             height=250
         )
@@ -670,3 +810,5 @@ def get_agent_report(
     print(
         f"PDF criado: {PDF_FILE}"
     )
+
+    logger.info("Término da geração do relatório.")  
