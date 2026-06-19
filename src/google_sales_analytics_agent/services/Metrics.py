@@ -1,10 +1,11 @@
 import logging
 import pandas as pd
+from typing import Dict, Any
 
 
 def calculate_metrics(
     df: pd.DataFrame
-) -> pd.DataFrame:
+) -> Dict[str, Any]:
     """
     Calcula métricas gerais de vendas
     e retorna resultados em DataFrame.
@@ -16,8 +17,8 @@ def calculate_metrics(
 
     Returns
     -------
-    pd.DataFrame
-        DataFrame contendo métricas
+    Dict
+        Dicionário contendo métricas
         consolidadas.
     """
 
@@ -25,68 +26,118 @@ def calculate_metrics(
 
     try:
 
-        logger.info(
-            "Calculando métricas."
+        logger.info("Calculando métricas.")
+
+        # ------------------------------------------------------
+        # Métricas derivadas
+        # ------------------------------------------------------
+        df_metrics = df.copy()
+
+        df_metrics["faturamento"] = (
+            df_metrics["quantidade_vendida"]
+            * df_metrics["valor_venda"]
         )
 
-        base = df.copy()
-
-        faturamento = float(
-            (
-                base["quantidade_vendida"]
-                *
-                base["valor_venda"]
-            ).sum()
+        df_metrics["custo_total"] = (
+            df_metrics["quantidade_vendida"]
+            * df_metrics["valor_compra"]
         )
 
-        custo = float(
-            (
-                base["quantidade_vendida"]
-                *
-                base["valor_compra"]
-            ).sum()
+        df_metrics["lucro"] = (
+            df_metrics["faturamento"]
+            - df_metrics["custo_total"]
         )
 
-        lucro = faturamento - custo
+        # ------------------------------------------------------
+        # KPIs gerais
+        # ------------------------------------------------------
+        kpis = {
+            "total_vendas": len(df_metrics),
 
-        margem_pct = (
-            (lucro / faturamento) * 100
-            if faturamento != 0
-            else 0
+            "total_itens_vendidos":
+                df_metrics["quantidade_vendida"].sum(),
+
+            "faturamento_total":
+                df_metrics["faturamento"].sum(),
+
+            "custo_total":
+                df_metrics["custo_total"].sum(),
+
+            "lucro_total":
+                df_metrics["lucro"].sum(),
+
+            "margem":
+                (df_metrics["lucro"] / df_metrics["faturamento"]) * 100,
+
+            "ticket_medio":
+                df_metrics["faturamento"].mean(),
+
+            "qtd_produtos":
+                df_metrics["produto_id"].nunique(),
+
+            "qtd_vendedores":
+                df_metrics["vendedor_id"].nunique()
+        }
+
+        # ------------------------------------------------------
+        # Métricas por vendedor
+        # ------------------------------------------------------
+        by_seller = (
+            df_metrics
+            .groupby(
+                ["vendedor_id", "vendedor"],
+                as_index=False
+            )
+            .agg(
+                vendas=("vendedor_id", "count"),
+                itens_vendidos=("quantidade_vendida", "sum"),
+                faturamento=("faturamento", "sum"),
+                lucro=("lucro", "sum")
+            )
+            .sort_values(
+                by="faturamento",
+                ascending=False
+            )
         )
 
-        metrics_df = pd.DataFrame({
+        # ------------------------------------------------------
+        # Métricas por produto
+        # ------------------------------------------------------
 
-            "metrica": [
-
-                "faturamento_total",
-                "custo_total",
-                "lucro_total",
-                "margem_percentual"
-
-            ],
-
-            "valor": [
-
-                faturamento,
-                custo,
-                lucro,
-                margem_pct
-
-            ]
-
-        })
-
-        logger.info(
-            "Métricas calculadas."
+        by_product = (
+            df_metrics
+            .groupby(
+                ["produto_id", "produto"],
+                as_index=False
+            )
+            .agg(
+                vendas=("produto_id", "count"),
+                itens_vendidos=("quantidade_vendida", "sum"),
+                faturamento=("faturamento", "sum"),
+                lucro=("lucro", "sum")
+            )
+            .sort_values(
+                by="faturamento",
+                ascending=False
+            )
         )
 
-        return metrics_df
+        logger.info("Métricas calculadas.")
+
+        # ------------------------------------------------------
+        # Retorno
+        # ------------------------------------------------------
+
+        return {
+            "status": "sucesso",
+            "mensagem": "Métricas calculadas com sucesso.",
+            "kpis": kpis,
+            "by_seller": by_seller,
+            "by_product": by_product
+        }
 
     except Exception:
-
         logger.exception(
             "Erro ao calcular métricas."
         )
-
         raise
