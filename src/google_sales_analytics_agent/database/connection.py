@@ -34,7 +34,6 @@ def get_engine(config: Dict[str, Any]) -> Engine:
     logger.info("Iniciando criação da engine.")
 
     try:
-        
         # Monta string de conexão utilizada
         # pelo SQLAlchemy para acessar MySQL.
         conn=(
