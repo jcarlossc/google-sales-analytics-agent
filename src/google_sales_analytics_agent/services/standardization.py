@@ -1,7 +1,9 @@
 import logging
 import pandas as pd
 
-def standardize_sales_data(df: pd.DataFrame) -> pd.DataFrame:
+def standardize_sales_data(
+    df: pd.DataFrame
+) -> pd.DataFrame:
     """
     Realiza padronização dos dados de vendas.
 
@@ -34,12 +36,15 @@ def standardize_sales_data(df: pd.DataFrame) -> pd.DataFrame:
         Para erros inesperados.
     """
 
+    # Recupera logger do módulo atual para
+    # rastreamento do fluxo de execução.
     logger = logging.getLogger(__name__)
 
     logger.info(
         "Iniciando padronização dos dados."
     )
 
+    # Colunas a serem padronizadas
     required_columns = [
         "vendas_id",
         "data_venda",
@@ -51,7 +56,6 @@ def standardize_sales_data(df: pd.DataFrame) -> pd.DataFrame:
     ]
 
     try:
-
         # Verifica se todas as colunas
         # necessárias existem.
         missing = [
@@ -60,7 +64,6 @@ def standardize_sales_data(df: pd.DataFrame) -> pd.DataFrame:
         ]
 
         if missing:
-
             logger.warning(
                 f"Colunas ausentes: {missing}"
             )
@@ -96,7 +99,6 @@ def standardize_sales_data(df: pd.DataFrame) -> pd.DataFrame:
         ]
 
         for col in numeric_cols:
-
             df[col] = pd.to_numeric(
                 df[col],
                 errors="coerce"
@@ -110,7 +112,6 @@ def standardize_sales_data(df: pd.DataFrame) -> pd.DataFrame:
         ]
 
         for col in text_cols:
-
             df[col] = (
                 df[col]
                 .astype(str)
@@ -139,19 +140,16 @@ def standardize_sales_data(df: pd.DataFrame) -> pd.DataFrame:
         logger.warning(
             f"Erro de estrutura: {error}"
         )
-
         raise
 
     except ValueError as error:
         logger.error(
             f"Erro de transformação: {error}"
         )
-
         raise
 
     except Exception as error:
         logger.exception(
             "Erro inesperado durante padronização."
         )
-
         raise
