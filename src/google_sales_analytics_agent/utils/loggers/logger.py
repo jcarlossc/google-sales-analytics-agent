@@ -2,7 +2,10 @@ import logging
 from typing import Dict, Any
 from pathlib import Path
 
-def setup_logger(logging_config: Dict[str, Any], log_file: str) -> None:
+def setup_logger(
+    logging_config: Dict[str, Any], 
+    log_file: str
+) -> None:
     """
     Configura o sistema de logging da aplicação.
 
@@ -38,7 +41,6 @@ def setup_logger(logging_config: Dict[str, Any], log_file: str) -> None:
     """
     
     try:
-
         # Garante que a pasta existe
         Path(log_file).parent.mkdir(parents=True, exist_ok=True)
 
