@@ -102,7 +102,7 @@ def run_pipeline() -> None:
 
         logger.info("Validando dados.")
 
-        df = validate_sales_data(standardization)
+        df, quality_report = validate_sales_data(standardization)
 
         # -------------------------
         # Métricas Financeiras
