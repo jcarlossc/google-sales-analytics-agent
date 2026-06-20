@@ -32,6 +32,8 @@ def get_load_sales(engine: Engine) -> pd.DataFrame:
         Quando o resultado retornado está vazio.
     """
 
+    # Recupera logger do módulo atual para
+    # rastreamento do fluxo de execução.
     logger = logging.getLogger(__name__)
 
     logger.info(
@@ -67,7 +69,6 @@ def get_load_sales(engine: Engine) -> pd.DataFrame:
     """
 
     try:
-
         # Executa consulta SQL e converte
         # resultado para DataFrame Pandas.
         df = pd.read_sql(
@@ -94,12 +95,10 @@ def get_load_sales(engine: Engine) -> pd.DataFrame:
         logger.error(
             f"Erro ao executar consulta SQL: {error}"
         )
-
         raise
 
     except Exception as error:
         logger.exception(
             "Erro inesperado ao carregar vendas."
         )
-
         raise
