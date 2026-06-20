@@ -44,7 +44,6 @@ def load_all_configs(config_path: Path) -> Dict[str, Any]:
     configs: Dict[str, Any] = {}
 
     try:
-
         # Verifica se o diretório de configuração existe.
         # Caso contrário, interrompe a execução informando erro.
         if not config_path.exists():

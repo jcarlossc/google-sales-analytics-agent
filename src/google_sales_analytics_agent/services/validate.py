@@ -36,6 +36,8 @@ def validate_sales_data(
         Erros inesperados.
     """
 
+    # Recupera logger do módulo atual para
+    # rastreamento do fluxo de execução.
     logger = logging.getLogger(__name__)
 
     logger.info(
