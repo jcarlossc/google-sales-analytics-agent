@@ -43,13 +43,13 @@ def validate_sales_data(
     )
 
     try:
-
+        # Testa se DataFrame vazio
         if df.empty:
-
             raise ValueError(
                 "Dataset vazio."
             )
 
+        # Cria dicionário
         quality_report = {}
 
         # Mede quantidade de valores ausentes.
@@ -146,18 +146,16 @@ def validate_sales_data(
             "Validação concluída."
         )
 
-        return df
+        return df, quality_report
 
     except ValueError as error:
         logger.warning(
             str(error)
         )
-
         raise
 
     except Exception:
         logger.exception(
             "Erro durante validação."
         )
-
         raise
