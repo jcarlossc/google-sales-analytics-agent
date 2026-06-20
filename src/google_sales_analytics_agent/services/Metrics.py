@@ -2,10 +2,7 @@ import logging
 import pandas as pd
 from typing import Dict, Any
 
-
-def calculate_metrics(
-    df: pd.DataFrame
-) -> Dict[str, Any]:
+def calculate_metrics(df: pd.DataFrame) -> Dict[str, Any]:
     """
     Calcula métricas gerais de vendas
     e retorna resultados em DataFrame.
@@ -22,10 +19,11 @@ def calculate_metrics(
         consolidadas.
     """
 
+    # Recupera logger do módulo atual para
+    # rastreamento do fluxo de execução.
     logger = logging.getLogger(__name__)
 
     try:
-
         logger.info("Calculando métricas.")
 
         # ------------------------------------------------------
@@ -127,7 +125,6 @@ def calculate_metrics(
         # ------------------------------------------------------
         # Retorno
         # ------------------------------------------------------
-
         return {
             "status": "sucesso",
             "mensagem": "Métricas calculadas com sucesso.",
