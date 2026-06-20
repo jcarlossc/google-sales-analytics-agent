@@ -1,8 +1,8 @@
 import logging
-from typing import Dict #, Any, List
+from typing import Dict, Any
 import pandas as pd
 
-def descriptive_statistics(df: pd.DataFrame) -> Dict:
+def descriptive_statistics(df: pd.DataFrame) -> Dict[str, Any]:
     """
     Gera estatísticas descritivas para dataset de vendas.
 
@@ -16,21 +16,26 @@ def descriptive_statistics(df: pd.DataFrame) -> Dict:
     Dict[str, Any]
     """
 
+    # Recupera logger do módulo atual para
+    # rastreamento do fluxo de execução.
     logger = logging.getLogger(__name__)
 
     logger.info("Calculando Estatística Descritiva.")
 
     try:
-
+        # Testa se DataFrame vazio
         if df.empty:
             raise ValueError(
                 "DataFrame vazio."
             )
 
+        # Cria dicionário
         statistics_df = {
 
+            # Conta total de registros
             "total_registros": df["vendas_id"].count(),
 
+            # Valores referentes à data
             "data_venda": {
 
                 "primeira_venda":
@@ -52,6 +57,7 @@ def descriptive_statistics(df: pd.DataFrame) -> Dict:
                     .mode()[0]
             },
 
+            # Valores referentes à quantidade vendida
             "quantidade_vendida": {
 
                 "media":
@@ -78,6 +84,7 @@ def descriptive_statistics(df: pd.DataFrame) -> Dict:
                 "maximo": df["quantidade_vendida"].max()  
             },
 
+            # Valores referentes aos produtos
             "produto": {
                 "produtos_unicos":
                     df["produto"].nunique(),
@@ -90,6 +97,7 @@ def descriptive_statistics(df: pd.DataFrame) -> Dict:
                     df["produto"] .value_counts() .head(5)    
             },
 
+            # Valores referentes aos valores de compra
             "valor_compra": {
                 "media": round( df["valor_compra"].mean(), 2 ), 
                 
@@ -102,6 +110,7 @@ def descriptive_statistics(df: pd.DataFrame) -> Dict:
                 "q3": df["valor_compra"].quantile( 0.75 ),  
             },
 
+            # Valores referentes aos valores de venda
             "valor_venda" : {
                 "media": round( df["valor_venda"].mean(), 2 ), 
                 
@@ -118,7 +127,6 @@ def descriptive_statistics(df: pd.DataFrame) -> Dict:
         return statistics_df
 
     except Exception as erro:
-
         raise RuntimeError(
             f"Erro estatístico: {erro}"
         ) from erro
