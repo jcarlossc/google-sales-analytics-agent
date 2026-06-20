@@ -27,41 +27,49 @@ def get_agent_report(
     statistics_df: Dict[str, Any]
 ) -> None:
     
+    # Recupera logger do módulo atual para
+    # rastreamento do fluxo de execução.
     logger = logging.getLogger(__name__)
 
     logger.info("Início da geração do relatório.")    
 
+    # Carregamento de arquivos de configuração
     config_path = Path("config")
 
     configs = load_all_configs(config_path)
 
-    # =====================================================
+    # -----------------------------------
     # CONFIGURAÇÕES
-    # =====================================================
+    # -----------------------------------
+    # Diretório do relatório
     OUTPUT_DIR = Path("reports")
 
+    # Cria diretório caso não exista
     OUTPUT_DIR.mkdir(
         exist_ok=True
     )
 
+    # Arquivo PDF
     PDF_FILE = OUTPUT_DIR / "relatorio_financeiro.pdf"
 
+    # Arquivos de imagens
     GRAPH_FILE_INDICADORES = OUTPUT_DIR / "indicadores.png"
     GRAPH_FILE_TOP_SELLER = OUTPUT_DIR / "top_seller.png"
     GRAPH_FILE_TOP_PRODUCTS = OUTPUT_DIR / "top_products.png"
 
+    # Chave de agente IA Google
     API_KEY = configs["api_google"]["api"]["api_google"]
 
-    # =====================================================
+    # -----------------------------------
     # CONFIGURAR GEMINI
-    # =====================================================
+    # -----------------------------------
     client = genai.Client(
         api_key = API_KEY
     )
 
-    # =====================================================
+    # -----------------------------------
     # MÉTRICAS
-    # =====================================================
+    # -----------------------------------
     total_vendas = metrics_df["kpis"]["total_vendas"]
     total_itens_vendidos = metrics_df["kpis"]["total_itens_vendidos"]
     faturamento_total = metrics_df["kpis"]["faturamento_total"]
@@ -74,9 +82,9 @@ def get_agent_report(
     by_seller = metrics_df["by_seller"]
     by_product = metrics_df["by_product"]
 
-    # =====================================================
+    # -----------------------------------
     # ESTATÍSTICAS
-    # =====================================================
+    # -----------------------------------
     total_registros = statistics_df["total_registros"]
     data_venda = statistics_df["data_venda"]
     primeira_venda = statistics_df["data_venda"]["primeira_venda"]
@@ -119,27 +127,22 @@ def get_agent_report(
         "Lucro",
         "Ticket Médio"
     ]    
-    fig, ax = plt.subplots(
-    figsize=(8, 5)
-    )
+    fig, ax = plt.subplots(figsize=(8, 5))
 
-    bars = ax.bar(
-        labels,
-        valores
-    )
+    bars = ax.bar(labels,valores)
 
+    # Título
     ax.set_title(
-        "Indicadores Financeiros"
+        "Indicadores Financeiros",
+        fontsize=16,
+        fontweight="bold",
+        pad=15
     )
 
-    ax.set_ylabel(
-        "Valor (R$)"
-    )
+    ax.set_ylabel("Valor (R$)")
 
     for bar in bars:
-
         altura = bar.get_height()
-
         ax.text(
             bar.get_x() + bar.get_width() / 2,
             altura,
@@ -167,9 +170,7 @@ def get_agent_report(
         .sort_values("faturamento")
     )
 
-    fig, ax = plt.subplots(
-        figsize=(10, 6)
-    )
+    fig, ax = plt.subplots(figsize=(10, 6))
 
     norm = mcolors.Normalize(
         vmin=top_sellers["faturamento"].min(),
@@ -190,9 +191,7 @@ def get_agent_report(
     max_value = top_sellers["faturamento"].max()
 
     for bar in bars:
-
         value = bar.get_width()
-
         ax.text(
             value * 1.01,
             bar.get_y() + bar.get_height()/2,
@@ -242,11 +241,9 @@ def get_agent_report(
         )
     )
 
-
     fig, ax = plt.subplots(
         figsize=(10, 6)
     )
-
 
     # Gradiente de cores
     norm = mcolors.Normalize(
@@ -260,7 +257,6 @@ def get_agent_report(
         )
     )
 
-
     # Barras horizontais
     bars = ax.barh(
         top_products["produto"],
@@ -270,12 +266,9 @@ def get_agent_report(
         linewidth=0.8
     )
 
-
     # Valores nas barras
     for bar in bars:
-
         valor = bar.get_width()
-
         ax.text(
             valor * 1.01,
             bar.get_y() + bar.get_height()/2,
@@ -290,7 +283,6 @@ def get_agent_report(
             fontweight="bold"
         )
 
-
     # Título
     ax.set_title(
         "Top 10 Produtos",
@@ -298,7 +290,6 @@ def get_agent_report(
         fontweight="bold",
         pad=15
     )
-
 
     ax.text(
         0.5,
@@ -310,20 +301,17 @@ def get_agent_report(
         color="gray"
     )
 
-
     ax.set_xlabel(
         "Faturamento (R$)",
         fontsize=11,
         fontweight="bold"
     )
 
-
     ax.set_ylabel(
         "Produto",
         fontsize=11,
         fontweight="bold"
     )
-
 
     # Grid
     ax.grid(
@@ -332,14 +320,11 @@ def get_agent_report(
         alpha=0.3
     )
 
-
     # Limpeza visual
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
-
     plt.tight_layout()
-
 
     plt.savefig(
         GRAPH_FILE_TOP_PRODUCTS,
@@ -348,7 +333,6 @@ def get_agent_report(
     )
 
     plt.close()
-
 
     # -----------------------------------
     # PROMPT
@@ -381,6 +365,8 @@ def get_agent_report(
     Margem percentual: {margem}
 
     Total registros: {total_registros}
+
+    Datas vendas: {data_venda}
 
     Primeira venda: {primeira_venda}
 
@@ -475,9 +461,9 @@ def get_agent_report(
     
     texto = response.text
 
-    # =====================================================
+    # -----------------------------------
     # EXTRATOR DE SEÇÕES
-    # =====================================================
+    # -----------------------------------
     def extrair_secao(
         texto: str,
         inicio: str,
@@ -485,11 +471,9 @@ def get_agent_report(
     ):
 
         if fim:
-
             padrao = rf"{inicio}:(.*?){fim}:"
 
         else:
-
             padrao = rf"{inicio}:(.*)"
 
         resultado = re.search(
@@ -499,13 +483,11 @@ def get_agent_report(
         )
 
         if resultado:
-
             return resultado.group(
                 1
             ).strip()
 
         return "Não encontrado"
-
 
     introducao = extrair_secao(
         texto,
@@ -548,16 +530,16 @@ def get_agent_report(
         "CONCLUSAO_FINAL"
     )
 
-    # =====================================================
+    # -----------------------------------
     # PDF
-    # =====================================================
+    # -----------------------------------
     styles = getSampleStyleSheet()
 
     story = []
 
-    # -----------------------------------------------------
+    # -----------------------------------
     # PÁGINA 1 - CAPA
-    # -----------------------------------------------------
+    # -----------------------------------
     story.append(
         Paragraph(
             "RELATÓRIO ESTATÍSTICO E FINANCEIRO",
@@ -572,12 +554,12 @@ def get_agent_report(
     story.append(
         Paragraph(
             f"Gerado em {datetime.now():%d/%m/%Y}",
-            styles["Heading2"]
+            styles["BodyText"]
         )
     )
 
     story.append(
-        Spacer(1,50)
+        Spacer(0,50)
     )
 
     story.append(
@@ -588,12 +570,34 @@ def get_agent_report(
     )
 
     story.append(
+        Spacer(0,50)
+    )
+
+    story.append(
+        Paragraph(
+            "Relatório gerado do Projeto Google Sales Analytics Agent",
+            styles["BodyText"]
+        )
+    )
+
+    story.append(
+        Spacer(0,50)
+    )
+
+    story.append(
+        Paragraph(
+            "Autor: Carlos da Costa",
+            styles["BodyText"]
+        )
+    )
+
+    story.append(
         PageBreak()
     )
 
-    # -----------------------------------------------------
+    # -----------------------------------
     # PÁGINA 2 - SUMÁRIO
-    # -----------------------------------------------------
+    # -----------------------------------
     story.append(
         Paragraph(
             "SUMÁRIO",
@@ -606,7 +610,7 @@ def get_agent_report(
         "2. Interpretação Estatística",
         "3. Interpretação Financeira",
         "4. Insights",
-        "5. Conclusão"
+        "6. Conclusão"
     ]
 
     for item in itens:
@@ -622,10 +626,9 @@ def get_agent_report(
         PageBreak()
     )
 
-
-    # -----------------------------------------------------
+    # -----------------------------------
     # PÁGINA 3 - INTRODUÇÃO
-    # -----------------------------------------------------
+    # -----------------------------------
     story.append(
         Paragraph(
             "INTRODUÇÃO",
@@ -648,9 +651,9 @@ def get_agent_report(
     )
 
 
-    # -----------------------------------------------------
+    # -----------------------------------
     # PÁGINA 4 - ESTATÍSTICA
-    # -----------------------------------------------------
+    # -----------------------------------
     story.append(
         Paragraph(
             "INTERPRETAÇÃO ESTATÍSTICA",
@@ -688,9 +691,9 @@ def get_agent_report(
     )
 
 
-    # -----------------------------------------------------
+    # -----------------------------------
     # PÁGINA 5 - FINANCEIRO
-    # -----------------------------------------------------
+    # -----------------------------------
     story.append(
         Paragraph(
             "INTERPRETAÇÃO FINANCEIRA",
@@ -728,9 +731,9 @@ def get_agent_report(
     )
 
 
-    # -----------------------------------------------------
+    # -----------------------------------
     # PÁGINA 6 - INSIGHTS
-    # -----------------------------------------------------
+    # -----------------------------------
     story.append(
         Paragraph(
             "INSIGHTS",
@@ -766,6 +769,10 @@ def get_agent_report(
     )
 
     story.append(
+        Spacer(1,50)
+    )
+
+    story.append(
         Image(
             str(GRAPH_FILE_TOP_PRODUCTS),
             width=450,
@@ -777,10 +784,9 @@ def get_agent_report(
         PageBreak()
     )
 
-
-    # -----------------------------------------------------
+    # -----------------------------------
     # PÁGINA 7 - CONCLUSÃO
-    # -----------------------------------------------------
+    # -----------------------------------
     story.append(
         Paragraph(
             "CONCLUSÃO",
@@ -795,20 +801,13 @@ def get_agent_report(
         )
     )
 
-
-    # =====================================================
+    # -----------------------------------
     # GERAR PDF
-    # =====================================================
-    doc = SimpleDocTemplate(
-        str(PDF_FILE)
-    )
+    # -----------------------------------
+    doc = SimpleDocTemplate(str(PDF_FILE))
 
-    doc.build(
-        story
-    )
+    doc.build(story)
 
-    print(
-        f"PDF criado: {PDF_FILE}"
-    )
+    print(f"PDF criado: {PDF_FILE}")
 
     logger.info("Término da geração do relatório.")  
