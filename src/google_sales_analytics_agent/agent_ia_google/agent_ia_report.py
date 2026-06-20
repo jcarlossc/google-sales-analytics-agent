@@ -547,9 +547,7 @@ def get_agent_report(
         )
     )
 
-    story.append(
-        Spacer(1,80)
-    )
+    story.append(Spacer(1,80))
 
     story.append(
         Paragraph(
@@ -558,9 +556,7 @@ def get_agent_report(
         )
     )
 
-    story.append(
-        Spacer(0,50)
-    )
+    story.append(Spacer(1, 10))
 
     story.append(
         Paragraph(
@@ -569,20 +565,16 @@ def get_agent_report(
         )
     )
 
-    story.append(
-        Spacer(0,50)
-    )
+    story.append(Spacer(1, 10))
 
     story.append(
         Paragraph(
-            "Relatório gerado do Projeto Google Sales Analytics Agent",
+            "Relatório gerado por meio de Agente IA Gemini do Projeto Google Sales Analytics Agent",
             styles["BodyText"]
         )
     )
 
-    story.append(
-        Spacer(0,50)
-    )
+    story.append(Spacer(1, 10))
 
     story.append(
         Paragraph(
@@ -591,9 +583,7 @@ def get_agent_report(
         )
     )
 
-    story.append(
-        PageBreak()
-    )
+    story.append(PageBreak())
 
     # -----------------------------------
     # PÁGINA 2 - SUMÁRIO
@@ -614,7 +604,6 @@ def get_agent_report(
     ]
 
     for item in itens:
-
         story.append(
             Paragraph(
                 item,
@@ -622,9 +611,7 @@ def get_agent_report(
             )
         )
 
-    story.append(
-        PageBreak()
-    )
+    story.append(PageBreak())
 
     # -----------------------------------
     # PÁGINA 3 - INTRODUÇÃO
@@ -646,10 +633,7 @@ def get_agent_report(
         )
     )
 
-    story.append(
-        PageBreak()
-    )
-
+    story.append(PageBreak())
 
     # -----------------------------------
     # PÁGINA 4 - ESTATÍSTICA
@@ -668,9 +652,7 @@ def get_agent_report(
         )
     )
 
-    story.append(
-        Spacer(1,20)
-    )
+    story.append(Spacer(1,20))
 
     story.append(
         Paragraph(
@@ -686,10 +668,7 @@ def get_agent_report(
         )
     )
 
-    story.append(
-        PageBreak()
-    )
-
+    story.append(PageBreak())
 
     # -----------------------------------
     # PÁGINA 5 - FINANCEIRO
@@ -708,9 +687,7 @@ def get_agent_report(
         )
     )
 
-    story.append(
-        Spacer(1,20)
-    )
+    story.append(Spacer(1,20))
 
     story.append(
         Paragraph(
@@ -726,10 +703,7 @@ def get_agent_report(
         )
     )
 
-    story.append(
-        PageBreak()
-    )
-
+    story.append(PageBreak())
 
     # -----------------------------------
     # PÁGINA 6 - INSIGHTS
@@ -748,9 +722,7 @@ def get_agent_report(
         )
     )
 
-    story.append(
-        Spacer(1,20)
-    )
+    story.append(Spacer(1, 30))
 
     story.append(
         Image(
@@ -760,6 +732,8 @@ def get_agent_report(
         )
     )
 
+    story.append(PageBreak())
+
     story.append(
         Image(
             str(GRAPH_FILE_TOP_SELLER),
@@ -768,9 +742,7 @@ def get_agent_report(
         )
     )
 
-    story.append(
-        Spacer(1,50)
-    )
+    story.append(Spacer(1,50))
 
     story.append(
         Image(
