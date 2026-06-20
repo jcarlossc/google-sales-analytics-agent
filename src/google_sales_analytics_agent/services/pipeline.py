@@ -1,6 +1,5 @@
 from pathlib import Path
 import pandas as pd
-from typing import Dict, Any, Tuple
 import logging
 
 from google_sales_analytics_agent.utils.load_config.loader_config import load_all_configs
@@ -13,7 +12,7 @@ from google_sales_analytics_agent.services.metrics import calculate_metrics
 from google_sales_analytics_agent.services.statistic import descriptive_statistics
 from google_sales_analytics_agent.agent_ia_google.agent_ia_report import get_agent_report
 
-def run_pipeline() -> Tuple[Dict[str, Any], Dict[str, Any]]:
+def run_pipeline() -> None:
     """
     Executa pipeline completo de análise de vendas.
 
@@ -26,16 +25,12 @@ def run_pipeline() -> Tuple[Dict[str, Any], Dict[str, Any]]:
     6. Valida dataset
     7. Calcula métricas
     8. Calcula estatísticas
-    9. Finaliza recursos
+    9. Cria relatório
+    10. Finaliza recursos
 
     Returns
     -------
-    Tuple[Dict[str, Any], Dict[str, Any]]
-        sales_metrics:
-            Métricas financeiras e comerciais.
-
-        statistics:
-            Estatísticas descritivas.
+    None
 
     Raises
     ------
@@ -43,10 +38,14 @@ def run_pipeline() -> Tuple[Dict[str, Any], Dict[str, Any]]:
         Caso alguma etapa do pipeline falhe.
     """
 
+    # Recupera logger do módulo atual para
+    # rastreamento do fluxo de execução.
     logger = logging.getLogger(__name__)
 
+    # Variável da conexão com Banco de Dados
     conn = None
 
+    # Padroniza valores
     pd.set_option(
         "display.float_format",
         "{:,.2f}".format
@@ -65,11 +64,14 @@ def run_pipeline() -> Tuple[Dict[str, Any], Dict[str, Any]]:
         configs = load_all_configs(config_path)
 
         # -------------------------
-        # Logger
+        # Criação do sistema de Logger
         # -------------------------
         logger.info("Criando logger.")
 
-        setup_logger(configs["logging"], configs["paths"]["logs"]["file"])
+        setup_logger(
+            configs["logging"], 
+            configs["paths"]["logs"]["file"]
+        )
 
         logger.info("### Iniciando pipeline de vendas. ###")
         
@@ -88,7 +90,7 @@ def run_pipeline() -> Tuple[Dict[str, Any], Dict[str, Any]]:
         queries = get_load_sales(conn)
 
         # -------------------------
-        # Transformação
+        # Padronização
         # -------------------------
         logger.info("Padronizando dados.")
 
@@ -103,25 +105,21 @@ def run_pipeline() -> Tuple[Dict[str, Any], Dict[str, Any]]:
         df = validate_sales_data(standardization)
 
         # -------------------------
-        # Métricas
+        # Métricas Financeiras
         # -------------------------
         logger.info("Processando métricas.")
 
         metrics_df = calculate_metrics(df)
 
-        #print(metrics_df)
-
         # -------------------------
-        # Estatística
+        # Métricas Estatística
         # -------------------------
         logger.info("Processando estatísticas.")
 
         statistics_df = descriptive_statistics(df)
 
-        #print(statistics_df)
-
         # -------------------------
-        # Agente IA Google
+        # Criação de relatório com Agente IA Google
         # -------------------------
         get_agent_report(
             metrics_df,
@@ -130,10 +128,7 @@ def run_pipeline() -> Tuple[Dict[str, Any], Dict[str, Any]]:
 
         logger.info("### Término do pipeline de vendas. ###")
 
-        #return (metrics, statistics)
-
     except Exception as erro:
-
         logger.exception(
             "Falha durante execução do pipeline."
         )
@@ -143,12 +138,8 @@ def run_pipeline() -> Tuple[Dict[str, Any], Dict[str, Any]]:
         ) from erro
 
     finally:
-
         if conn is not None:
-
-            logger.info(
-                "Fechando conexão."
-            )
+            logger.info("Fechando conexão.")
 
             conn.dispose()
 
