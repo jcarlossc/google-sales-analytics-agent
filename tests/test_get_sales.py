@@ -1,5 +1,4 @@
 import pandas as pd
-import pytest
 from unittest.mock import patch
 
 from google_sales_analytics_agent.database.load_sales import get_load_sales
