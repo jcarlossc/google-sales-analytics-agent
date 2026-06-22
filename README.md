@@ -28,34 +28,37 @@ transacionais em insights acionáveis.
 
 ## Principais Funcionalidades
 
-* Integração com Banco MySQL
-* conexão via SQLAlchemy
-* gerenciamento de conexões
-* leitura automatizada das tabelas
 ### Pipeline Automatizado
-* carga dos dados
-* padronização
-* validação
-* enriquecimento
-* geração automática de relatórios
+✅ Carrega configurações</br>
+✅ Configura logging</br>
+✅ Cria conexão com Banco de Dados</br>
+✅ Extrai dados</br>
+✅ Padronização dados</br>
+✅ Calcula métricas</br>
+✅ Calcula estatísticas</br>
+✅ Valida dados</br>
+✅ Geração automática de relatórios</br>
+
 ### Qualidade dos Dados
-* detecção de valores ausentes
-* validação estrutural
-* identificação de duplicidades
-* regras de negócio
-* verificação de inconsistências
+✅ Detecção de valores ausentes</br>
+✅ Validação estrutural</br>
+✅ Identificação de duplicidades</br>
+✅ Regras de negócio</br>
+✅ Verificação de inconsistências</br>
+✅ Verificação de valores negativos</br>
+✅ Verificação de datas</br>
+
 ### Observabilidade
-* logging estruturado
-* rastreamento de erros
-* monitoramento do pipeline
+✅ Logging estruturado</br>
+✅ Rastreamento de erros</br>
+✅ Monitoramento do pipeline</br>
+
 ### Relatórios com Agente de IA
-O sistema utiliza modelos generativos para:
-* resumo estatístico automático
-* interpretação dos indicadores
-* identificação de padrões
-* geração de insights
-* identificação de riscos dos dados
-* geração de relatórios textuais automatizados
+O sistema utiliza modelos generativos para:</br>
+✅ Resumo estatístico automático</br>
+✅ Interpretação dos indicadores</br>
+✅ Geração de insights</br>
+✅ Geração de relatórios textuais automatizados</br>
 
 ## Arquitetura Geral
 ```
@@ -73,7 +76,7 @@ Métricas / Estatísticas
      ↓
 Agente de IA
      ↓
-Relatórios Automáticos
+Relatórios textual Automáticos
 ```
 
 ## Estrutura do Projeto
@@ -81,15 +84,21 @@ Relatórios Automáticos
 google_sales_analysis_agent/
 |
 ├── config/
+│   ├── api_google.yaml
 │   ├── db.yaml
 │   ├── logging.yaml
 │   └── paths.yaml
 ├── logs/
 │     └── app.log
 ├── reports/
+│     ├── indicadores.png
+│     ├── top_products.png
+│     ├── top_seller.png
 │     └── Report.pdf
 ├── src/
 │   └── google_sales_analysis_agent/
+│         ├── agent_ia_google/
+│         │     └── agent_ia_report.py
 │         ├── database/
 │         │     ├── connection.py
 │         │     └── load_sales.py
@@ -98,6 +107,7 @@ google_sales_analysis_agent/
 │         │     ├── standardization.py
 │         │     ├── validate.py
 │         │     ├── metrics.py
+│         │     ├── statistic.py
 │         │     └── ai_reports.py
 │         ├── utils/
 |         |     ├── load_config/
