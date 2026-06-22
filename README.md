@@ -91,7 +91,7 @@ google_sales_analysis_agent/
 ├── logs/
 │     └── app.log
 ├── reports/
-│     ├── indicadores.png
+│     ├── indicators.png
 │     ├── top_products.png
 │     ├── top_seller.png
 │     └── Report.pdf
@@ -115,12 +115,35 @@ google_sales_analysis_agent/
 │         │     └── loggers/
 |         |          └── logger.py
 │         └── main.py
+|
+├── tests
+│     ├── test_get_engine.py
+│     ├── test_get_sales.py
+│     ├── test_load_all_config.py
+│     └── test_setup_logger.py
 ├── LICENSE
 ├── pyproject.toml
 ├── poetry.lock
 ├── README.md
 └── .gitignore
 ```
+
+## Tecnologias utilizadas
+| Tecnologia | Descrição |
+| ---------- | --------- |
+| Python | Linguagem de programação |
+| Pytest | Biblioteca de testes unitários |
+| Pandas | Biblioteca para análise de dados |
+| Reportlab | Biblioteca que permite a geração e manipulação dinâmica de documentos PDF |
+| matplotlib | Biblioteca gráfica |
+| Pymysql | Biblioteca cliente que permite conectar aplicações Python a bancos de dados MySQL ou MariaDB |
+| Sqlalchemy | Biblioteca que atua como um kit de ferramentas SQL e um Mapeador Objeto-Relacional (ORM) |
+| pyyaml | Biblioteca usada para analisar (ler), modificar e emitir (escrever) dados no formato YAML |
+| Agente IA | Sistema inteligente projetado para entender seu objetivo |
+| MySQL | Sistema de banco de dados tabular |
+| XAMPP | Stack de softwares |
+| Apache | Servidor |
+| VSCode | Editor de código |
 
 ## Estrutura dos Dados
 
@@ -152,15 +175,18 @@ Exemplo de log:
 2026-06-06 15:39:07,482 - INFO - google_sales_analytics_agent.services.standardization - 0 duplicatas removidas.
 2026-06-06 15:39:07,484 - INFO - google_sales_analytics_agent.services.standardization - Padronização concluída.
 2026-06-06 15:39:07,485 - INFO - google_sales_analytics_agent.services.pipeline - Validando dados.
-2026-06-06 15:39:07,486 - INFO - google_sales_analytics_agent.services.validate - Iniciando validação de qualidade.
+2026-06-06 15:39:07,486 - INFO - google_sales_analytics_agent.services.validate - Iniciando validação de qualidade...
 ```
 
 ## Mode de Utilização
 ⚠️Observação: aplicações em Python, ou em outras linguagens, que utilizam banco de dados e APIs, nunca é recomendado deixar senhas diretamente no código (hardcoded password). Neste projeto, por motivos didáticos (para facilitar a reprodução), o arquivo de senha do Banco de Dados e a chave da api Google estão no arquivo YAML, mas essa abordagem é extremamente desaprovada em produção. 
 
+1. Gerar chave de api
+* Com uma conta do google, acesse: <a href="https://aistudio.google.com/">https://aistudio.google.com/</a>
+* Criar um projeto e em seguida criar uma chave de api
+* Inserir a chave criada no arquivo ```config/api_google.yaml``` na raiz do projeto
 
-
-1. Execute o XAMPP
+2. Execute o XAMPP
 * Caso não o tenha, baixe-o: <a href="https://www.apachefriends.org/pt_br/download.html">https://www.apachefriends.org/pt_br/download.html</a>
 * Instale-o normalmente
 * Execute o Painel de Controle
@@ -169,29 +195,29 @@ Exemplo de log:
 * Clique na aba importar e em escolher arquivo: o script está na raiz do projeto: ```script_database/loja_informatica.sql```, após isso, clique em importar no final da página
 * O banco de Dados está com usuário ```root``` e senha vazia. O arquivo de configuração está em: ```config/db.yaml```
 
-2. Com a linguagem Python instalada: <a href="https://www.python.org/downloads/" target="_blank">https://www.python.org/downloads/</a>
-3. Instale o pipx: 
+3. Com a linguagem Python instalada: <a href="https://www.python.org/downloads/" target="_blank">https://www.python.org/downloads/</a>
+4. Instale o pipx: 
 ```
 pip install pipx
 ```
-4. Em seguida:
+5. Em seguida:
 ```
 pipx ensurepath
 ```
-5. E, por fim, o gerenciador Poetry:
+6. E, por fim, o gerenciador Poetry:
 ```
 pipx install poetry
 ```
-6. Clone o repositório e acesse o diretório
+7. Clone o repositório e acesse o diretório
 ```
 git clone https://github.com/jcarlossc/google-sales-analytics-agent.git
 cd google-sales-analytics-agent
 ```
-7. Instalação das dependências:
+8. Instalação das dependências:
 ```
 poetry install
 ```
-8. Para executar o projeto:
+9. Para executar o projeto:
 ```
 poetry run vendas
 ```
