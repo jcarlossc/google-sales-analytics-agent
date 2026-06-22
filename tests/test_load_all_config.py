@@ -8,11 +8,17 @@ def test_load_all_configs_retorna_dicionario():
     ao carregar um arquivo YAML válido.
     """
 
+    # Arrange (Preparação)
+
     # Diretório de teste contendo arquivos YAML
     config_path = Path("config")
 
+    # Act (Execução)
+
     # Executa a função que será testada
     resultado = load_all_configs(config_path)
+
+    # Assert (Verificação)
 
     # Verifica se o retorno é um dicionário
     assert isinstance(resultado, dict)
