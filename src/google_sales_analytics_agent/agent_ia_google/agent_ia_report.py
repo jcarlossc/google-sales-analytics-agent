@@ -103,7 +103,7 @@ def get_agent_report(
         PDF_FILE = OUTPUT_DIR / "relatorio_financeiro.pdf"
 
         # Arquivos de imagens
-        GRAPH_FILE_INDICADORES = OUTPUT_DIR / "indicadores.png"
+        GRAPH_FILE_INDICATORS = OUTPUT_DIR / "indicators.png"
         GRAPH_FILE_TOP_SELLER = OUTPUT_DIR / "top_seller.png"
         GRAPH_FILE_TOP_PRODUCTS = OUTPUT_DIR / "top_products.png"
 
@@ -204,7 +204,7 @@ def get_agent_report(
         plt.tight_layout()
 
         plt.savefig(
-            GRAPH_FILE_INDICADORES,
+            GRAPH_FILE_INDICATORS,
             dpi=300,
             bbox_inches="tight"
         )
@@ -741,7 +741,7 @@ def get_agent_report(
 
         story.append(
             Image(
-                str(GRAPH_FILE_INDICADORES),
+                str(GRAPH_FILE_INDICATORS),
                 width=450,
                 height=250
             )
