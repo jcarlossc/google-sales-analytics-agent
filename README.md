@@ -115,11 +115,15 @@ google_sales_analysis_agent/
 │         │     └── loggers/
 |         |          └── logger.py
 │         └── main.py
-|
 ├── tests
 │     ├── test_get_engine.py
 │     ├── test_get_sales.py
 │     ├── test_load_all_config.py
+│     ├── test_calculate_metrics.py 
+│     ├── test_descriptive_statistics.py
+│     ├── test_pipeline.py 
+│     ├── test_standardization_sales_data.py
+│     ├── test_validate.py
 │     └── test_setup_logger.py
 ├── LICENSE
 ├── pyproject.toml
@@ -176,6 +180,29 @@ Exemplo de log:
 2026-06-06 15:39:07,484 - INFO - google_sales_analytics_agent.services.standardization - Padronização concluída.
 2026-06-06 15:39:07,485 - INFO - google_sales_analytics_agent.services.pipeline - Validando dados.
 2026-06-06 15:39:07,486 - INFO - google_sales_analytics_agent.services.validate - Iniciando validação de qualidade...
+```
+
+## Testes Unitários
+Exemplos de testes:
+```
+================================================= test session starts =================================================
+platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\workspace\py\google\google-sales-analytics-agent
+configfile: pyproject.toml
+plugins: anyio-4.13.0
+collected 9 items
+
+tests\test_calculate_metrics.py .                                                                                [ 11%]
+tests\test_descriptive_statistics.py .                                                                           [ 22%]
+tests\test_get_engine.py .                                                                                       [ 33%]
+tests\test_get_sales.py .                                                                                        [ 44%]
+tests\test_load_all_config.py .                                                                                  [ 55%]
+tests\test_pipeline.py .                                                                                         [ 66%]
+tests\test_setup_logger.py .                                                                                     [ 77%]
+tests\test_standardization_sales_data.py .                                                                       [ 88%]
+tests\test_validate.py .                                                                                         [100%]
+
+================================================= 9 passed in 11.78s ==================================================
 ```
 
 ## Mode de Utilização
