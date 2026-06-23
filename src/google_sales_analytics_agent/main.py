@@ -10,8 +10,6 @@ Uso
     poetry run vendas
 """
 
-from google_sales_analytics_agent.utils.load_config.loader_config import load_all_configs
-from google_sales_analytics_agent.utils.loggers.logger import setup_logger
 from google_sales_analytics_agent.services.pipeline import run_pipeline
 
 def main() -> None:
